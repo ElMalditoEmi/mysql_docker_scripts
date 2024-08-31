@@ -35,7 +35,7 @@ check_install_image(){
 
 theres_previous_container(){
     # Start a running or stopped container 
-    if(docker ps | grep mysql); then
+    if(docker ps -a | grep mysql); then
        docker start $(docker ps -a | grep mysql | cut --delimiter=' ' -f 1)
        return 0;
     fi
@@ -58,7 +58,7 @@ fi
 
 print_separator
 if (theres_previous_container); then
-    echo "Se encontro una instancia anterior de docker corriendo"
+    echo "Se encontro una instancia anterior de la imagen, ahora está corriendo"
     exit 0;
 fi
 
@@ -68,10 +68,11 @@ echo "Si se deja vacia, el server no tendrá contraseña."
 echo ">>>"
 read mysql_root_pass
 
-if [ -z "${root_pass}" ]; then # El usuario eligio contraseña vacia
+echo $mysql_root_pass
+if [ -z "${mysql_root_pass}" ]; then # El usuario eligio contraseña vacia
     docker run --name "$(whoami)_mysql" -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -d mysql:latest
 else
-    docker run --name "$(whoami)_mysql" -e MYSQL_ROOT_PASSWORD=$root_pass -d mysql:latest
+    docker run --name "$(whoami)_mysql" -e MYSQL_ROOT_PASSWORD="$mysql_root_pass" -d mysql:latest
 fi
 
 print_separator
@@ -104,4 +105,4 @@ echo
 echo "Por si necesitas algo tan extremo como borrar le contenedor y revertir
 todo usa 'docker rm -f $(whoami)_mysql' (WARNING: Si habia datos en tu server o un esquema vas a perderlo)"
 
-
+sleep 4
