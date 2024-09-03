@@ -22,4 +22,4 @@ echo ""
 echo ">>>"; read root_password
 
 
-docker exec -i $container_name sh -c "exec mysql -v -uroot --password='${root_password}' "< ~/Downloads/world-data.sql
+docker exec -i $container_name sh -c "exec mysql -v -uroot --password='${root_password}' "< $1
